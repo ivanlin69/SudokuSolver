@@ -4,10 +4,9 @@
 SudokuSolver::SudokuSolver() {
     for(int i=1; i<10; i++){
         for(int j=1; j<10; j++){
-            std::pair<int, int> index = std::make_pair(i, j);
-            cellIndices.insert(index);
+            cellIndices.insert({i, j});
             std::unordered_set<int> values = {1,2,3,4,5,6,7,8,9};
-            cellValues[index] = values;
+            cellValues[{i, j}] = values;
         }
     }
 
@@ -16,9 +15,9 @@ SudokuSolver::SudokuSolver() {
         columnNeighbors[pair] = getColumnNeighbors(pair);
         blockNeighbors[pair] = getBlockNeighbors(pair);
 
-        allNeighbors[pair].insert(rowNeighbors[pair].begin(), rowNeighbors[pair].end());
-        allNeighbors[pair].insert(columnNeighbors[pair].begin(), columnNeighbors[pair].end());
-        allNeighbors[pair].insert(blockNeighbors[pair].begin(), blockNeighbors[pair].end());
+        allNeighbors[pair].insert(rowNeighbors.at(pair).begin(), rowNeighbors.at(pair).end());
+        allNeighbors.at(pair).insert(columnNeighbors.at(pair).begin(), columnNeighbors.at(pair).end());
+        allNeighbors.at(pair).insert(blockNeighbors.at(pair).begin(), blockNeighbors.at(pair).end());
     }
 
     arcs = getArcs();
@@ -29,9 +28,9 @@ void SudokuSolver::readBoard(std::string board) {
     for(int i=1; i<10; i++){
         for(int j=1; j<10; j++){
             std::pair<int, int> index = std::make_pair(i, j);
-            int value = board[k] - '0';
+            int value = board.at(k) - '0';
             if(value != 0){
-                cellValues[index] = {value};
+                cellValues.at(index) = {value};
             }
             k++;
         }
@@ -78,10 +77,10 @@ std::unordered_set<std::pair<int, int>, pairHashing> SudokuSolver::getBlockNeigh
 
 std::unordered_set<std::pair<std::pair<int, int>, std::pair<int, int>>, pairOfPairHashing> SudokuSolver::getArcs() {
 
-    for(std::unordered_set<std::pair<int, int>>::iterator it=cellIndices.begin(); it!= cellIndices.end(); ++it){
+    for(std::set<std::pair<int, int>>::iterator it=cellIndices.begin(); it!= cellIndices.end(); ++it){
         std::pair<int, int> target = *it;
 
-        std::unordered_set<std::pair<int, int>, pairHashing> neighbors = allNeighbors[target];
+        std::unordered_set<std::pair<int, int>, pairHashing> neighbors = allNeighbors.at(target);
 
         for(std::unordered_set<std::pair<int, int>>::iterator it2 = neighbors.begin(); it2 != neighbors.end(); ++it2){
             std::pair<std::pair<int, int>, std::pair<int, int>> arc = std::make_pair(target, *it2);
@@ -91,9 +90,9 @@ std::unordered_set<std::pair<std::pair<int, int>, std::pair<int, int>>, pairOfPa
     return arcs;
 }
 
-bool SudokuSolver::isSolved(){
+bool SudokuSolver::isSolved() const {
     for(std::pair<int, int> index : cellIndices){
-        if(cellValues[index].size() != 1){
+        if(cellValues.at(index).size() != 1){
             return false;
         }
     }
@@ -102,12 +101,12 @@ bool SudokuSolver::isSolved(){
 
 bool SudokuSolver::removeInconsistentValue(std::pair<int, int> index1, std::pair<int, int> index2){
     bool removed = false;
-    if(cellValues[index2].size() == 1){
-        int target = *cellValues[index2].begin();
+    if(cellValues.at(index2).size() == 1){
+        int target = *cellValues.at(index2).begin();
 
-        std::unordered_set<int>::iterator it = cellValues[index1].find(target);
-        if(it != cellValues[index1].end()){
-            cellValues[index1].erase(it);
+        std::unordered_set<int>::iterator it = cellValues.at(index1).find(target);
+        if(it != cellValues.at(index1).end()){
+            cellValues.at(index1).erase(it);
             removed = true;
         }
     }
@@ -129,7 +128,7 @@ void SudokuSolver::inferAC3(){
         queueArc.pop();
 
         if(removeInconsistentValue(targetArc.first, targetArc.second)){
-            std::unordered_set<std::pair<int, int>, pairHashing> candidates = allNeighbors[targetArc.first];
+            std::unordered_set<std::pair<int, int>, pairHashing> candidates = allNeighbors.at(targetArc.first);
             candidates.erase(targetArc.second);
 
             std::unordered_set<std::pair<int, int>, pairHashing>::iterator it2 = candidates.begin();
@@ -144,7 +143,7 @@ void SudokuSolver::inferAC3(){
 bool SudokuSolver::isCandidateValid(int candidate, std::unordered_set<std::pair<int, int>, pairHashing> neighbors){
 
     for(std::pair<int, int> pair : neighbors){
-        std::unordered_set<int> values = cellValues[pair];
+        std::unordered_set<int> values = cellValues.at(pair);
         if(values.find(candidate) != values.end()){
             return false;
         }
@@ -168,8 +167,8 @@ void SudokuSolver::inferAC3Improved(){
             if((it->second).size() > 1){
                 std::unordered_set<int> candidates = it->second;
                 for(int candidate : candidates){
-                    if(isCandidateValid(candidate, rowNeighbors[it->first]) || isCandidateValid(candidate, columnNeighbors[it->first]) || isCandidateValid(candidate, blockNeighbors[it->first])){
-                        cellValues[it->first] = {candidate};
+                    if(isCandidateValid(candidate, rowNeighbors.at(it->first)) || isCandidateValid(candidate, columnNeighbors.at(it->first)) || isCandidateValid(candidate, blockNeighbors.at(it->first))){
+                        cellValues.at(it->first) = {candidate};
                         convergence = false;
                         break;
                     }
@@ -211,8 +210,8 @@ bool SudokuSolver::inferAC3Guessing(){
     std::priority_queue<std::pair<int, std::pair<int, int>>, std::vector<std::pair<int, std::pair<int, int>>>, cellComparator> minHeap;
 
     for(const std::pair<int, int>& index : cellIndices){
-        if(cellValues[index].size() > 1){
-            minHeap.push({cellValues[index].size(), index});
+        if(cellValues.at(index).size() > 1){
+            minHeap.push({cellValues.at(index).size(), index});
         }
     }
 
@@ -222,11 +221,11 @@ bool SudokuSolver::inferAC3Guessing(){
 
     std::pair<int, int> targetCell = minHeap.top().second;
     minHeap.pop();
-    std::unordered_set<int> candidates = cellValues[targetCell];
+    std::unordered_set<int> candidates = cellValues.at(targetCell);
     for(int candidate : candidates){
         std::unordered_map<std::pair<int, int>, std::unordered_set<int>, pairHashing> prevCells = cellValues;
         // start guessing
-        cellValues[targetCell] = {candidate};
+        cellValues.at(targetCell) = {candidate};
 
         if(inferAC3Guessing()){
             return true;
@@ -240,21 +239,12 @@ bool SudokuSolver::inferAC3Guessing(){
 
 void SudokuSolver::printStatus(){
 
-    for(int i=1; i<10; i++){
-        for(int j=1; j<10; j++){
-            std::cout << cellValues[{i, j}] << " ";
-            if(j == 9){
+    for(std::pair<int, int> index : cellIndices){
+        std::cout << cellValues.at(index) << " ";
+            if(index.second == 9){
                 std::cout << "\n";
             }
-        }
     }
-}
-
-std::ostream& operator<<(std::ostream& os, const std::vector<int>& vec) {
-    for (const int& value : vec) {
-        os << value << " ";
-    }
-    return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const std::unordered_set<int>& set) {

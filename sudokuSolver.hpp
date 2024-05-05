@@ -1,3 +1,4 @@
+#include <set>
 #include <unordered_set>
 #include <unordered_map>
 #include <queue>
@@ -25,7 +26,7 @@ struct pairOfPairHashing{
 class SudokuSolver {
 
 private:
-    std::unordered_set<std::pair<int, int>, pairHashing> cellIndices;
+    std::set<std::pair<int, int>> cellIndices;
     std::unordered_map<std::pair<int, int>, std::unordered_set<int>, pairHashing> cellValues;
     std::unordered_map<std::pair<int, int>, std::unordered_set<std::pair<int, int>, pairHashing>, pairHashing> rowNeighbors;
     std::unordered_map<std::pair<int, int>, std::unordered_set<std::pair<int, int>, pairHashing>, pairHashing> columnNeighbors;
@@ -34,22 +35,23 @@ private:
 
     std::unordered_set<std::pair<std::pair<int, int>, std::pair<int, int>>, pairOfPairHashing> arcs;
 
-public:
-    SudokuSolver();
-
-    void readBoard(std::string board);
-
     std::unordered_set<std::pair<int, int>, pairHashing> getRowNeighbors(std::pair<int, int> target);
     std::unordered_set<std::pair<int, int>, pairHashing> getColumnNeighbors(std::pair<int, int> target);
     std::unordered_set<std::pair<int, int>, pairHashing> getBlockNeighbors(std::pair<int, int> target);
 
     std::unordered_set<std::pair<std::pair<int, int>, std::pair<int, int>>, pairOfPairHashing> getArcs();
-    bool isSolved();
+
+    bool isSolved() const;
     // Note this function works regardless of arcs
     bool removeInconsistentValue(std::pair<int, int> index1, std::pair<int, int> index2);
-
-    void inferAC3();
     bool isCandidateValid(int candidate, std::unordered_set<std::pair<int, int>, pairHashing> neighbors);
+
+
+public:
+    SudokuSolver();
+
+    void readBoard(std::string board);
+    void inferAC3();
     void inferAC3Improved();
     bool inferAC3Guessing();
     void printStatus();
@@ -57,7 +59,6 @@ public:
     virtual ~SudokuSolver() = default;
 };
 
-std::ostream& operator<<(std::ostream& os, const std::vector<int>& vec);
 std::ostream& operator<<(std::ostream& os, const std::unordered_set<int>& set);
 std::ostream& operator<<(std::ostream& os, const std::unordered_set<std::pair<int, int>>& set);
 std::ostream& operator<<(std::ostream& os, const std::unordered_set<std::pair<std::pair<int, int>, std::pair<int, int>>>& set);

@@ -30,6 +30,7 @@ Run the solver using the following command:
 ### Advanced Solving Techniques
 - **AC-3 Algorithm**: Implements the AC-3 (Arc Consistency Algorithm #3) to reduce the search space by making the puzzle arc-consistent, which helps in solving easier puzzles without guessing.
 - **Backtracking Algorithm**: Uses a sophisticated backtracking method that combines with the AC-3 reductions to solve more complex puzzles that cannot be resolved through direct constraint satisfaction alone.
+- **Minimum Remaining Values Heuristic**: Leverages the well-established MRV heuristic, a powerful strategy widely used in constraint satisfaction problems. This heuristic efficiently prioritizes cells with the fewest possible numbers left, significantly accelerating the solving process.
 
 ### User-Friendly Interaction
 - **Interactive Console Application**: Offers a simple and interactive console interface where users can input the path to a text file containing the Sudoku puzzle they wish to solve.

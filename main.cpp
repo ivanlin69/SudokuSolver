@@ -15,10 +15,9 @@ int main() {
     //sudokuSolver.inferAC3();
     //sudokuSolver.inferAC3Improved();
     sudokuSolver.inferAC3Guessing();
-    sudokuSolver.printStatus();
     b=clock();
+    sudokuSolver.printStatus();
     std::cout << double(b)/CLOCKS_PER_SEC << std::endl;
-
 
     return 0;
 }

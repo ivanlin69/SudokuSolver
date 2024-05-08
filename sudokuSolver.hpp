@@ -56,10 +56,13 @@ public:
     SudokuSolver();
 
     void readBoard(const std::string& board);
+    bool readBoardFromFiles();
     void inferAC3();
     void inferAC3Improved();
     bool inferAC3Guessing();
     void printStatus();
+    void welcomeMessage();
+    void endMessage();
 
     virtual ~SudokuSolver() = default;
 };

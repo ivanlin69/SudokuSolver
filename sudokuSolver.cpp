@@ -1,5 +1,6 @@
 #include "sudokuSolver.hpp"
 #include <iostream>
+#include <fstream>
 
 SudokuSolver::SudokuSolver() {
 
@@ -27,17 +28,61 @@ SudokuSolver::SudokuSolver() {
 }
 
 void SudokuSolver::readBoard(const std::string& board) {
-    int k = 0;
+    int i = 0;
     for(int row=1; row<=9; ++row){
         for(int col=1; col<=9; ++col){
             std::pair<int, int> index = {row, col};
-            int value = board.at(k) - '0';
+            int value = board.at(i) - '0';
             if(value != 0){
                 cellValues.at(index) = {value};
             }
-            k++;
+            ++i;
         }
     }
+}
+
+bool SudokuSolver::readBoardFromFiles(){
+    std::string userInput;
+    std::ifstream file;
+
+    do{
+        std::cout << "Please enter the file name(including '.txt'),\nOr enter '--exit' to leave the program:\n";
+        std::getline(std::cin, userInput);
+
+        if(userInput == "--exit"){
+            file.close();
+            return false;
+        }
+
+        std::cout << "\n ... loading the file ... \n";
+        file.open(userInput);
+
+        if(!file.is_open()){
+            std::cerr << "\nFailed to open the file " << userInput << " . Please check the file location/name and try again. Or enter '--exit' to leave the program.\n\n";
+        }
+    } while(!file.is_open());
+
+    std::string line;
+    int k = 0;
+    int row = 1;
+    while(getline(file, line) && row <= 9){
+        for(int col = 1; col <=9; ++col){
+            std::pair<int, int> index = {row, col};
+            char ch = line.at(k++);
+            if(ch != '*'){
+                int value = ch - '0';
+                cellValues.at(index) = {value};
+            }
+        }
+        k=0;
+        ++row;
+    }
+    file.close();
+    std::cout << "\nFile loaded successfully. Here is your puzzle:\n";
+    printStatus();
+
+    std::cout << "Starts analyzing the puzzle ... \n";
+    return true;
 }
 
 std::unordered_set<std::pair<int, int>, pairHashing> SudokuSolver::getRowNeighbors(const std::pair<int, int>& target) const {
@@ -224,12 +269,39 @@ bool SudokuSolver::inferAC3Guessing(){
 }
 
 void SudokuSolver::printStatus(){
+    std::cout << std::endl;
+
     for(const std::pair<int, int>& index : cellIndices){
-        std::cout << cellValues.at(index) << " ";
-            if(index.second == 9){
-                std::cout << "\n";
-            }
+        const std::unordered_set<int>& values = cellValues.at(index);
+        if(values.size() != 9){
+            std::cout << cellValues.at(index) << " ";
+        } else {
+            std::cout << "{ } ";
+        }
+        if(index.second == 9){
+            std::cout << "\n";
+        }
     }
+    std::cout << std::endl;
+}
+
+void SudokuSolver::welcomeMessage() {
+    std::cout << "\n\n";
+    std::cout << "================================================================================\n";
+    std::cout << " _________         .___      __          _________      .__             -v1.8.1\n";
+    std::cout << "/   _____/__ __  __| _/____ |  | ____ __/   _____/ ____ |  |___  __ ___________\n";
+    std::cout << "\\_____  \\|  |  \\/ __ |/  _ \\|  |/ /  |  \\_____  \\ /  _ \\|  |\\  \\/ // __ \\_  __ \\\n";
+    std::cout << "/        \\  |  / /_/ (  <_> )    <|  |  /        (  <_> )  |_\\   /\\  ___/|  | \\/\n";
+    std::cout << "/_______ /____/\\_____|\\____/|__|_ \\____/_______  /\\____/|____/\\_/  \\___  >__|\n";
+    std::cout << "       \\/           \\/           \\/            \\/                      \\/\n";
+    std::cout << "================================================================================\n";
+    std::cout << "Welcome to Sudoku solver! Let me solve the sudoku puzzle for you ... \n";
+    std::cout << "First, I need your help to load the puzzle file.\n\n";
+}
+
+void SudokuSolver::endMessage() {
+  std::cout << "\nThank you and good bye!\n\n";
+    std::cout << "================================================================================\n";
 }
 
 std::ostream& operator<<(std::ostream& os, const std::unordered_set<int>& set) {

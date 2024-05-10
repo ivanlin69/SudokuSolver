@@ -16,11 +16,11 @@ To install the Sudoku Solver, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/sudokusolver.git
+   git clone https://github.com/ivanlin69/sudokuSolver.git
    ```
 2. Navigate to the project directory:
    ```bash
-   cd sudokusolver
+   cd sudokuSolver
    ```
 3. Compile the project (make sure you have a C++ compiler installed):
    ```bash

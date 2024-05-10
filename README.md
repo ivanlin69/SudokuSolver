@@ -3,7 +3,15 @@
 ## Description
 This project is a Sudoku Solver that automates the process of solving Sudoku puzzles using advanced algorithmic techniques. It includes implementations of the AC-3 algorithm and uses backtracking for puzzles that cannot be solved through constraint propagation alone.
 
-## Installation
+
+## Getting Started
+
+### Prerequisites
+
+- A modern C++ compiler that supports C++11 (e.g., GCC, Clang, MSVC)
+- CMake for building the project (optional)
+
+### Installation
 To install the Sudoku Solver, follow these steps:
 
 1. Clone the repository:

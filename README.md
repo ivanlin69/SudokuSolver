@@ -20,7 +20,7 @@ To install the Sudoku Solver, follow these steps:
    ```
 2. Navigate to the project directory:
    ```bash
-   cd sudokuSolver
+   cd SudokuSolver
    ```
 3. Compile the project (make sure you have a C++ compiler installed):
    ```bash

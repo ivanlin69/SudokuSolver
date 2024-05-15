@@ -1,4 +1,4 @@
-# Sudoku Auto Solver
+# Sudoku Solver
 
 ## Description
 This project is a Sudoku Solver that automates the process of solving Sudoku puzzles using advanced algorithmic techniques. It includes implementations of the AC-3 algorithm and uses backtracking for puzzles that cannot be solved through constraint propagation alone.

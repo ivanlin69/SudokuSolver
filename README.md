@@ -16,7 +16,7 @@ To install the Sudoku Solver, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ivanlin69/sudokuSolver.git
+   git clone https://github.com/ivanlin69/SudokuSolver.git
    ```
 2. Navigate to the project directory:
    ```bash

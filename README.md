@@ -28,10 +28,36 @@ To install the Sudoku Solver, follow these steps:
    ```
 
 ## Usage
+Before launching the program, ensure that your puzzle files(.txt) are following the format correctly and placed in the 'Puzzles' folder within the project directory.
+
 Run the solver using the following command:
 ```bash
 ./SudokuSolver
 ```
+The program will prompt you to enter the file name (including the .txt extension) of the puzzle file you wish to solve. You can also enter --exit to leave the program.
+
+## Puzzle File Format
+Your puzzle files must adhere to the following format:
+
+- Each file must contain exactly 9 lines of puzzle data.
+- Each line must contain exactly 9 characters.
+- Use digits 1 to 9 to represent known values.
+- Use the asterisk (*) to represent empty cells.
+
+### Example
+
+```markdown
+***7****3
+*96******
+2**85****
+17*2*4*36
+*6**7**4*
+*826*351*
+****17**8
+******25*
+9****2***
+```
+Ensure your puzzle files follow this format to be correctly read and solved by the program.
 
 ## Features
 

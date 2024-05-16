@@ -1,14 +1,14 @@
 # Sudoku Solver
 
 ## Description
-This project is a Sudoku Solver that automates the process of solving Sudoku puzzles using advanced algorithmic techniques. It includes implementations of the AC-3 algorithm and uses backtracking for puzzles that cannot be solved through constraint propagation alone.
+This project is a Sudoku Solver that automates the process of solving Sudoku puzzles using advanced algorithmic techniques. It includes implementations of the `AC-3` algorithm and uses backtracking for puzzles that cannot be solved through constraint propagation alone.
 
 
 ## Getting Started
 
 ### Prerequisites
 
-- A modern C++ compiler that supports C++11 (e.g., GCC, Clang)
+- A modern C++ compiler that supports `C++11` (e.g., GCC, Clang)
 - CMake for building the project (optional)
 
 ### Installation
@@ -28,13 +28,13 @@ To install the Sudoku Solver, follow these steps:
    ```
 
 ## Usage
-Before launching the program, ensure that your puzzle files(.txt) are following the format correctly and placed in the 'Puzzles' folder within the project directory.
+Before launching the program, ensure that your puzzle files(.txt) are following the format correctly and placed in the `Puzzles` folder within the project directory.
 
 Run the solver using the following command:
 ```bash
 ./SudokuSolver
 ```
-The program will prompt you to enter the file name (including the .txt extension) of the puzzle file you wish to solve. You can also enter --exit to leave the program.
+The program will prompt you to enter the file name (including the `.txt` extension) of the puzzle file you wish to solve. You can also enter `--exit` to leave the program.
 
 ## Puzzle File Format
 Your puzzle files must adhere to the following format:

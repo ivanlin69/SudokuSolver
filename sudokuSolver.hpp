@@ -34,7 +34,7 @@ struct cellComparator{
 
 
 class SudokuSolver {
-
+    
 private:
     // Set of all possible cell indices in the Sudoku grid
     std::set<std::pair<int, int>> cellIndices;
@@ -52,9 +52,9 @@ private:
     std::unordered_set<std::pair<int, int>, pairHashing> getRowNeighbors(const std::pair<int, int>& target) const;
     std::unordered_set<std::pair<int, int>, pairHashing> getColNeighbors(const std::pair<int, int>& target) const;
     std::unordered_set<std::pair<int, int>, pairHashing> getBlockNeighbors(const std::pair<int, int>& target) const;
-
+    
     std::unordered_set<std::pair<std::pair<int, int>, std::pair<int, int>>, pairOfPairHashing> getArcs();
-
+    
     // Check if the Sudoku is solved
     bool isSolved() const;
     // Enforce consistency between pairs
@@ -62,8 +62,8 @@ private:
     bool removeInconsistentValue(const std::pair<int, int>& index1, const std::pair<int, int>& index2);
     // Validate candidate numbers
     bool isCandidateValid(int candidate, const std::unordered_set<std::pair<int, int>, pairHashing>& neighbors);
-
-
+    
+    
 public:
     SudokuSolver();
     // Initialize board from string
@@ -82,7 +82,7 @@ public:
     void welcomeMessage();
     // Display a closing message
     void endMessage();
-    virtual ~SudokuSolver() = default;
+    ~SudokuSolver() = default;
 };
 
 // Overloads the output stream operator to print the contents of an unordered set of different types of elements.

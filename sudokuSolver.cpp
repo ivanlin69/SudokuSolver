@@ -18,7 +18,7 @@ SudokuSolver::SudokuSolver() {
         rowNeighbors[pair] = getRowNeighbors(pair);
         colNeighbors[pair] = getColNeighbors(pair);
         blockNeighbors[pair] = getBlockNeighbors(pair);
-
+        
         // Combine all types of neighbors into allNeighbors for easy access
         allNeighbors[pair].insert(rowNeighbors.at(pair).begin(), rowNeighbors.at(pair).end());
         allNeighbors.at(pair).insert(colNeighbors.at(pair).begin(), colNeighbors.at(pair).end());
@@ -30,7 +30,7 @@ SudokuSolver::SudokuSolver() {
 
 // Reads a Sudoku board from a string input, initializing cell values.
 void SudokuSolver::readBoard(const std::string& board) {
-    int i = 0;
+    std::size_t i = 0;
     for(int row=1; row<=9; ++row){
         for(int col=1; col<=9; ++col){
             std::pair<int, int> index = {row, col};
@@ -49,27 +49,28 @@ void SudokuSolver::readBoard(const std::string& board) {
 bool SudokuSolver::readBoardFromFiles(){
     std::string userInput;
     std::ifstream file;
-
+    
     do{
         std::cout << "Please enter the file name(including '.txt'),\nOr enter '--exit' to leave the program:\n";
         std::getline(std::cin, userInput);
-
+        
         if(userInput == "--exit"){
             file.close();
             return false;
         }
-
+        
         std::cout << "\n ... loading the file ... \n";
-        file.open(userInput);
-
+        std::string filePath = "Puzzles/" + userInput;
+        file.open(filePath);
+        
         if(!file.is_open()){
             std::cerr << "\nFailed to open the file " << userInput << " . Please check the file location/name and try again. Or enter '--exit' to leave the program.\n\n";
         }
     } while(!file.is_open());
-
+    
     // Read the file line by line and set the values in the Sudoku grid
     std::string line;
-    int k = 0;
+    std::size_t k = 0;
     int row = 1;
     while(getline(file, line) && row <= 9){
         for(int col = 1; col <=9; ++col){
@@ -87,7 +88,7 @@ bool SudokuSolver::readBoardFromFiles(){
     file.close();
     std::cout << "\nFile loaded successfully. Here is your puzzle:\n";
     printStatus();
-
+    
     std::cout << "Starts analyzing the puzzle ... \n";
     return true;
 }
@@ -100,7 +101,7 @@ bool SudokuSolver::readBoardFromFiles(){
  * @return An unordered set of pairs representing the indices of the row neighbors.
  */
 std::unordered_set<std::pair<int, int>, pairHashing> SudokuSolver::getRowNeighbors(const std::pair<int, int>& target) const {
-
+    
     std::unordered_set<std::pair<int, int>, pairHashing> rowNeighbors;
     for(int row=1; row<=9; ++row){
         rowNeighbors.emplace(row, target.second);
@@ -118,7 +119,7 @@ std::unordered_set<std::pair<int, int>, pairHashing> SudokuSolver::getRowNeighbo
  * @return An unordered set of pairs representing the indices of the column neighbors.
  */
 std::unordered_set<std::pair<int, int>, pairHashing> SudokuSolver::getColNeighbors(const std::pair<int, int>& target) const {
-
+    
     std::unordered_set<std::pair<int, int>, pairHashing> colNeighbors;
     for(int col=1; col<=9; ++col){
         colNeighbors.emplace(target.first, col);
@@ -136,15 +137,15 @@ std::unordered_set<std::pair<int, int>, pairHashing> SudokuSolver::getColNeighbo
  * @return An unordered set of pairs representing the indices of the block neighbors.
  */
 std::unordered_set<std::pair<int, int>, pairHashing> SudokuSolver::getBlockNeighbors(const std::pair<int, int>& target) const {
-
+    
     std::unordered_set<std::pair<int, int>, pairHashing> blockNeighbors;
     // Calculate starting row of the block
     int row = (target.first - 1) - (target.first - 1) % 3;
     // Calculate starting column of the block
     int column = (target.second - 1) - (target.second - 1) % 3;
-
-    for(int i=1; i<4; i++){
-        for(int j=1; j<4; j++){
+    
+    for(int i=1; i<4; ++i){
+        for(int j=1; j<4; ++j){
             blockNeighbors.emplace(row + i, column + j);
         }
     }
@@ -160,7 +161,7 @@ std::unordered_set<std::pair<int, int>, pairHashing> SudokuSolver::getBlockNeigh
  * @return A set of pairs where each pair consists of two cell indices representing an arc.
  */
 std::unordered_set<std::pair<std::pair<int, int>, std::pair<int, int>>, pairOfPairHashing> SudokuSolver::getArcs(){
-
+    
     for(const std::pair<int, int>& targetIndex : cellIndices){
         std::unordered_set<std::pair<int, int>, pairHashing> neighbors = allNeighbors.at(targetIndex);
         for(const std::pair<int, int>& neighbor : neighbors){
@@ -214,13 +215,13 @@ bool SudokuSolver::removeInconsistentValue(const std::pair<int, int>& index1, co
  * a cell's domain, it re-evaluates its neighbors to ensure consistency is maintained.
  */
 void SudokuSolver::inferAC3(){
-
+    
     std::queue<std::pair<std::pair<int, int>, std::pair<int, int>>> queueArc;
     // Initialize the queue with all existing arcs
     for(const std::pair<std::pair<int, int>, std::pair<int, int>>& arc : arcs){
         queueArc.push(arc);
     }
-
+    
     while(!queueArc.empty()){
         const std::pair<std::pair<int, int>, std::pair<int, int>>& targetArc = queueArc.front();
         queueArc.pop();
@@ -246,7 +247,7 @@ void SudokuSolver::inferAC3(){
  * @return true if the candidate is valid (not found in neighbors), false otherwise.
  */
 bool SudokuSolver::isCandidateValid(int candidate, const std::unordered_set<std::pair<int, int>, pairHashing>& neighbors){
-
+    
     for(const std::pair<int, int>& pair : neighbors){
         const std::unordered_set<int>& values = cellValues.at(pair);
         // .count() returns 0 if the element is not found, or 1 otherwise.
@@ -264,19 +265,19 @@ bool SudokuSolver::isCandidateValid(int candidate, const std::unordered_set<std:
  */
 void SudokuSolver::inferAC3Improved(){
     inferAC3();
-    int attempts = 0;
+    std::size_t attempts = 0;
 
     while(!isSolved()){
         ++attempts;
         bool convergence = true;
-
+        
         std::unordered_map<std::pair<int, int>, std::unordered_set<int>, pairHashing> prevCells(cellValues);
         // remember that keys are immutable
         for(const std::pair<const std::pair<int, int>, std::unordered_set<int>>& pair : cellValues){
-
+            
             const std::pair<int, int>& index = pair.first;
             const std::unordered_set<int>& candidates = pair.second;
-
+            
             if(candidates.size() > 1){
                 for(int candidate : candidates){
                     if(isCandidateValid(candidate, rowNeighbors.at(index)) ||
@@ -307,22 +308,22 @@ void SudokuSolver::inferAC3Improved(){
 bool SudokuSolver::inferAC3Guessing(){
 
     inferAC3Improved();
-
+    
     if(isSolved()){
         return true;
     }
-
+    
     for(const std::pair<const std::pair<int, int>, std::unordered_set<int>>& cell: cellValues){
         if(cell.second.empty()){
             // No valid values left to assign, means it's unsolvable
             return false;
         }
     }
-
+    
     // This priority queue with cells based on the minimum remaining values heuristic,
     // which prioritizes cells with the fewest possible values left.
     std::priority_queue<std::pair<int, std::pair<int, int>>, std::vector<std::pair<int, std::pair<int, int>>>, cellComparator> minHeap;
-
+    
     // Iterates through all cell indices and populate the queue
     for(const std::pair<int, int>& index : cellIndices){
         std::size_t size = cellValues.at(index).size();
@@ -330,16 +331,16 @@ bool SudokuSolver::inferAC3Guessing(){
             minHeap.push({size, index});
         }
     }
-
+    
     std::pair<int, int> targetCell = minHeap.top().second;
     minHeap.pop();
     std::unordered_set<int> candidates = cellValues.at(targetCell);
-
+    
     for(int candidate : candidates){
         std::unordered_map<std::pair<int, int>, std::unordered_set<int>, pairHashing> prevCells = cellValues;
         // start guessing
         cellValues.at(targetCell) = {candidate};
-
+        
         if(inferAC3Guessing()){
             return true;
         }
@@ -356,7 +357,7 @@ bool SudokuSolver::inferAC3Guessing(){
  */
 void SudokuSolver::printStatus(){
     std::cout << std::endl;
-
+    
     for(const std::pair<int, int>& index : cellIndices){
         const std::unordered_set<int>& values = cellValues.at(index);
         if(values.size() != 9){
@@ -373,16 +374,18 @@ void SudokuSolver::printStatus(){
 
 void SudokuSolver::welcomeMessage() {
     std::cout << "\n\n";
-    std::cout << "================================================================================\n";
+    std::cout << "================================================================================\n\n";
     std::cout << " _________         .___      __          _________      .__             -v1.8.1\n";
     std::cout << "/   _____/__ __  __| _/____ |  | ____ __/   _____/ ____ |  |___  __ ___________\n";
     std::cout << "\\_____  \\|  |  \\/ __ |/  _ \\|  |/ /  |  \\_____  \\ /  _ \\|  |\\  \\/ // __ \\_  __ \\\n";
     std::cout << "/        \\  |  / /_/ (  <_> )    <|  |  /        (  <_> )  |_\\   /\\  ___/|  | \\/\n";
     std::cout << "/_______ /____/\\_____|\\____/|__|_ \\____/_______  /\\____/|____/\\_/  \\___  >__|\n";
-    std::cout << "       \\/           \\/           \\/            \\/                      \\/\n";
+    std::cout << "       \\/           \\/           \\/            \\/                      \\/\n\n";
     std::cout << "================================================================================\n";
     std::cout << "Welcome to Sudoku solver! Let me solve the sudoku puzzle for you ... \n";
     std::cout << "First, I need your help to load the puzzle file.\n\n";
+    
+    std::cout << "** NOTICE: Ensure that your puzzle files(.txt) are following the format correctly and placed in the 'Puzzles' folder within the project directory! **\n\n";
 }
 
 void SudokuSolver::endMessage() {

@@ -24,7 +24,7 @@ To install the Sudoku Solver, follow these steps:
    ```
 3. Compile the project (make sure you have a C++ compiler installed):
    ```bash
-   clang++ -o SudokuSolver main.cpp SudokuSolver.cpp -std=c++11
+   make default
    ```
 
 ## Usage
@@ -32,7 +32,7 @@ Before launching the program, ensure that your puzzle files(.txt) are following 
 
 Run the solver using the following command:
 ```bash
-./SudokuSolver
+make
 ```
 The program will prompt you to enter the file name (including the `.txt` extension) of the puzzle file you wish to solve. You can also enter `--exit` to leave the program.
 

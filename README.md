@@ -9,7 +9,7 @@ This project is a Sudoku Solver that automates the process of solving Sudoku puz
 ### Prerequisites
 
 - A modern C++ compiler that supports `C++11` (e.g., GCC, Clang)
-- CMake for building the project (optional)
+- CMake for building the project
 
 ### Installation
 To install the Sudoku Solver, follow these steps:
